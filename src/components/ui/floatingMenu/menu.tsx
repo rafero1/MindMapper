@@ -1,13 +1,15 @@
 import { useEffect, useRef } from "react";
 import classes from "./style.module.css";
+import type { MapNode } from "../../../stores/types";
 
 type Props = {
   open: boolean;
   x: number;
   y: number;
-  onRename?: () => void;
-  onAdd?: () => void;
-  onDelete?: () => void;
+  targetNode: MapNode | null;
+  onRename?: (node: MapNode) => void;
+  onAdd?: (node: MapNode) => void;
+  onDelete?: (node: MapNode) => void;
   onClose?: () => void;
 };
 
@@ -15,6 +17,7 @@ const FloatingMenu = ({
   open,
   x,
   y,
+  targetNode,
   onRename,
   onAdd,
   onDelete,
@@ -33,9 +36,13 @@ const FloatingMenu = ({
           X
         </button>
       </div>
-      <button onClick={onRename}>Rename</button>
-      <button onClick={onAdd}>Add</button>
-      <button onClick={onDelete}>Delete</button>
+      <button onClick={() => targetNode && onRename?.(targetNode)}>
+        Rename
+      </button>
+      <button onClick={() => targetNode && onAdd?.(targetNode)}>Add</button>
+      <button onClick={() => targetNode && onDelete?.(targetNode)}>
+        Delete
+      </button>
     </div>
   ) : null;
 };
