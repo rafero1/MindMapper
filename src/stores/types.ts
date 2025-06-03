@@ -8,3 +8,7 @@ export interface MapNode {
   text: string;
   parentId?: string;
 }
+
+export function generateNodeId(): string {
+  return `node-${Math.random().toString(36).slice(2, 9)}`;
+}

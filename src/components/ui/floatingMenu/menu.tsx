@@ -1,28 +1,19 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import classes from "./style.module.css";
-import type { MapNode } from "../../../stores/types";
+import { generateNodeId, type MapNode } from "../../../stores/types";
+import { useMapNodeStore } from "../../../stores/nodeStore";
 
 type Props = {
   open: boolean;
   x: number;
   y: number;
-  targetNode: MapNode | null;
-  onRename?: (node: MapNode) => void;
-  onAdd?: (node: MapNode) => void;
-  onDelete?: (node: MapNode) => void;
-  onClose?: () => void;
+  selectedNode: MapNode | null;
+  onClose: () => void;
 };
 
-const FloatingMenu = ({
-  open,
-  x,
-  y,
-  targetNode,
-  onRename,
-  onAdd,
-  onDelete,
-  onClose,
-}: Props) => {
+const FloatingMenu = ({ open, x, y, selectedNode, onClose }: Props) => {
+  const { addNode, updateText } = useMapNodeStore((state) => state);
+
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   return open ? (
@@ -36,13 +27,40 @@ const FloatingMenu = ({
           X
         </button>
       </div>
-      <button onClick={() => targetNode && onRename?.(targetNode)}>
+      <button
+        onClick={() => {
+          if (!selectedNode) {
+            return;
+          }
+          const newText = prompt("Enter new text:", selectedNode.text);
+          if (!newText || newText.trim() === "") {
+            return;
+          }
+          updateText(selectedNode.id, newText);
+          onClose();
+        }}
+      >
         Rename
       </button>
-      <button onClick={() => targetNode && onAdd?.(targetNode)}>Add</button>
-      <button onClick={() => targetNode && onDelete?.(targetNode)}>
-        Delete
+      <button
+        onClick={() => {
+          onClose();
+          if (!selectedNode) {
+            return;
+          }
+          const newNode = {
+            id: generateNodeId(),
+            x: selectedNode.x + 200,
+            y: selectedNode.y,
+            text: `Node`,
+            parentId: selectedNode.id,
+          };
+          addNode(newNode);
+        }}
+      >
+        Add
       </button>
+      <button onClick={() => console.log("Delete clicked")}>Delete</button>
     </div>
   ) : null;
 };
