@@ -1,8 +1,11 @@
 {
   "name": "mindmapper",
+  "description": "A mind mapping tool built with React and Konva",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "license": "MIT",
+  "author": "Rafael Avilar",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
