@@ -2,8 +2,8 @@ import "./App.css";
 import { useState } from "react";
 import { Layer, Stage } from "react-konva";
 import FloatingMenu from "./components/ui/floatingMenu/menu";
-import type { MapNode } from "./stores/types";
-import { useMapNodeStore } from "./stores/nodeStore";
+import type { TreeNode } from "./stores/types";
+import { useTreeNodeStore } from "./stores/nodeStore";
 import CanvasNode from "./components/canvas/node/canvasNode";
 import NodeConnection from "./components/canvas/connection/connection";
 
@@ -11,8 +11,6 @@ import NodeConnection from "./components/canvas/connection/connection";
  * TODO:
  *
  * Close menu when clicking outside
- *
- * Delete node function (what happens to connections?)
  *
  * Choose node text when creating
  *
@@ -34,10 +32,12 @@ import NodeConnection from "./components/canvas/connection/connection";
  */
 
 function App() {
-  const { nodes, updatePosition } = useMapNodeStore((state) => state);
+  const { nodes, updateNodePosition: updatePosition } = useTreeNodeStore(
+    (state) => state
+  );
 
   const [isNodeMenuOpen, setIsNodeMenuOpen] = useState(false);
-  const [selectedNode, setSelectedNode] = useState<MapNode | null>(null);
+  const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
   const [nodeMenuPosition, setNodeMenuPosition] = useState({
     x: 0,
     y: 0,

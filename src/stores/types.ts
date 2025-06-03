@@ -1,7 +1,7 @@
 /**
- * MapNode represents a node in the graph
+ * TreeNode represents a node in the mind map tree
  */
-export interface MapNode {
+export interface TreeNode {
   id: string;
   x: number;
   y: number;
@@ -9,6 +9,6 @@ export interface MapNode {
   parentId?: string;
 }
 
-export function generateNodeId(): string {
+export function generateNodeId() {
   return `node-${Math.random().toString(36).slice(2, 9)}`;
 }

@@ -1,10 +1,10 @@
 import { Circle, Group, Text } from "react-konva";
-import type { MapNode } from "../../../stores/types";
+import type { TreeNode } from "../../../stores/types";
 import type { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 import { Colors } from "../../../theme/colors";
 
 type Props = {
-  node: MapNode;
+  node: TreeNode;
   onClick: (event: KonvaEventObject<MouseEvent, Node<NodeConfig>>) => void;
   onDragMove: (event: KonvaEventObject<DragEvent, Node<NodeConfig>>) => void;
 };
@@ -21,8 +21,8 @@ const CanvasNode = ({ node, onClick, onDragMove }: Props) => {
     >
       <Circle
         radius={60}
-        fill={Colors.nodeFill}
-        stroke={Colors.nodeStroke}
+        fill={Colors.NODE_FILL}
+        stroke={Colors.NODE_STROKE}
         strokeWidth={3}
       />
       {node.text && (
@@ -30,7 +30,7 @@ const CanvasNode = ({ node, onClick, onDragMove }: Props) => {
           key={node.id + "-text"}
           text={node.text}
           fontSize={20}
-          fill={Colors.nodeText}
+          fill={Colors.NODE_TEXT}
           width={120}
           height={120}
           x={-60}

@@ -1,17 +1,17 @@
 import { Line } from "react-konva";
-import type { MapNode } from "../../../stores/types";
+import type { TreeNode } from "../../../stores/types";
 import { Colors } from "../../../theme/colors";
 
 type Props = {
-  parent: MapNode;
-  node: MapNode;
+  parent: TreeNode;
+  node: TreeNode;
 };
 
 const NodeConnection = ({ parent, node }: Props) => {
   return (
     <Line
       points={[parent.x, parent.y, node.x, node.y]}
-      stroke={Colors.nodeStroke}
+      stroke={Colors.NODE_STROKE}
       strokeWidth={3}
     />
   );

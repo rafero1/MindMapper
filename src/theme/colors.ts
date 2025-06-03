@@ -1,5 +1,5 @@
-export const Colors = {
-  nodeFill: "#fbe571",
-  nodeStroke: "#f35757",
-  nodeText: "black",
-};
+export const Colors = Object.freeze({
+  NODE_FILL: "#fbe571",
+  NODE_STROKE: "#f35757",
+  NODE_TEXT: "black",
+});

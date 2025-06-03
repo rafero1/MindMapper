@@ -1,18 +1,20 @@
 import { useRef } from "react";
 import classes from "./style.module.css";
-import { generateNodeId, type MapNode } from "../../../stores/types";
-import { useMapNodeStore } from "../../../stores/nodeStore";
+import { generateNodeId, type TreeNode } from "../../../stores/types";
+import { useTreeNodeStore } from "../../../stores/nodeStore";
 
 type Props = {
   open: boolean;
   x: number;
   y: number;
-  selectedNode: MapNode | null;
+  selectedNode: TreeNode | null;
   onClose: () => void;
 };
 
 const FloatingMenu = ({ open, x, y, selectedNode, onClose }: Props) => {
-  const { addNode, updateText } = useMapNodeStore((state) => state);
+  const { addNode, updateNodeText, deleteNode } = useTreeNodeStore(
+    (state) => state
+  );
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -29,6 +31,7 @@ const FloatingMenu = ({ open, x, y, selectedNode, onClose }: Props) => {
       </div>
       <button
         onClick={() => {
+          onClose();
           if (!selectedNode) {
             return;
           }
@@ -36,8 +39,7 @@ const FloatingMenu = ({ open, x, y, selectedNode, onClose }: Props) => {
           if (!newText || newText.trim() === "") {
             return;
           }
-          updateText(selectedNode.id, newText);
-          onClose();
+          updateNodeText(selectedNode.id, newText);
         }}
       >
         Rename
@@ -60,7 +62,17 @@ const FloatingMenu = ({ open, x, y, selectedNode, onClose }: Props) => {
       >
         Add
       </button>
-      <button onClick={() => console.log("Delete clicked")}>Delete</button>
+      <button
+        onClick={() => {
+          onClose();
+          if (!selectedNode) {
+            return;
+          }
+          deleteNode(selectedNode.id);
+        }}
+      >
+        Delete
+      </button>
     </div>
   ) : null;
 };
