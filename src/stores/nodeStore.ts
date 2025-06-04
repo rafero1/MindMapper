@@ -34,13 +34,21 @@ interface NodeState {
 }
 
 /**
- * returns the direct children of a node
+ * builds and returns a map of parentId: [list of TreeNode children]
  * @param nodes the NodeMap
- * @param id the id of the parent
- * @returns array of TreeNodes
  */
-export function getChildren(nodes: NodeMap, id: string) {
-  return Object.values(nodes).filter((node) => node.parentId === id);
+function mapNodesToChildren(nodes: NodeMap) {
+  const childIndex: { [parentId: string]: TreeNode[] } = {};
+  for (const nodeId in nodes) {
+    const node = nodes[nodeId];
+    if (node.parentId) {
+      if (!childIndex[node.parentId]) {
+        childIndex[node.parentId] = [];
+      }
+      childIndex[node.parentId].push(node);
+    }
+  }
+  return childIndex;
 }
 
 /**
@@ -50,18 +58,27 @@ export function getChildren(nodes: NodeMap, id: string) {
  * @returns array of descendants
  */
 export function getDescendants(nodes: NodeMap, parentId: string) {
+  const childIndex = mapNodesToChildren(nodes);
   const descendants: TreeNode[] = [];
-  const collectChildren = (id: string) => {
-    const children = getChildren(nodes, id);
-    if (children.length === 0) {
-      return;
-    }
+
+  // Use a queue to perform a breadth-first search for descendants, starting from the parent
+  const queue: string[] = [parentId];
+  const processedIds = new Set<string>();
+  let head = 0;
+  while (head < queue.length) {
+    const currentId = queue[head++];
+    const children = childIndex[currentId];
+
+    if (!children) continue;
+
     for (const child of children) {
-      descendants.push(child);
-      collectChildren(child.id);
+      if (!processedIds.has(child.id)) {
+        processedIds.add(child.id);
+        queue.push(child.id);
+        descendants.push(child);
+      }
     }
-  };
-  collectChildren(parentId);
+  }
   return descendants;
 }
 
@@ -91,7 +108,7 @@ export const useTreeNodeStore = create<NodeState>((set) => ({
           const parentId = updatedNodes[id].parentId;
           delete updatedNodes[id];
           if (!parentId) break;
-          const children = getChildren(updatedNodes, id);
+          const children = mapNodesToChildren(updatedNodes)[id];
           for (const child of children) {
             updatedNodes[child.id].parentId = parentId;
           }

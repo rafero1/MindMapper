@@ -11,6 +11,7 @@ import NodeConnection from "./components/canvas/connection/connection";
  * TODO:
  *
  * Close menu when clicking outside
+ * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
  *
  * Choose node text when creating
  *
