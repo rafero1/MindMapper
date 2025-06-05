@@ -108,18 +108,23 @@ export const useTreeNodeStore = create<NodeState>((set) => ({
           const parentId = updatedNodes[id].parentId;
           delete updatedNodes[id];
           if (!parentId) break;
+
           const children = mapNodesToChildren(updatedNodes)[id];
+          if (!children || children.length === 0) break;
+
           for (const child of children) {
             updatedNodes[child.id].parentId = parentId;
           }
           break;
         }
         case "cascade": {
+          delete updatedNodes[id];
           const descendants = getDescendants(updatedNodes, id);
+          if (!descendants || descendants.length === 0) break;
+
           for (const child of descendants) {
             delete updatedNodes[child.id];
           }
-          delete updatedNodes[id];
           break;
         }
         default:
