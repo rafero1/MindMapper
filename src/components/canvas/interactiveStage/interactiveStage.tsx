@@ -1,8 +1,9 @@
 import type { KonvaEventObject } from "konva/lib/Node";
 import type { Stage as StageType } from "konva/lib/Stage";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Stage } from "react-konva";
 import { useSettingsStore } from "../../../stores/settingsStore/settingsStore";
+import { setCursor } from "../../../utils/css";
 
 const ZOOM_BY = 1.2;
 const MIN_ZOOM = 0.1;
@@ -112,6 +113,14 @@ const InteractiveStage = ({ children }: Props) => {
     });
     setLastPointerPosition(pointer);
   };
+
+  useEffect(() => {
+    if (draggingStage) {
+      setCursor("grabbing");
+    } else {
+      setCursor("auto");
+    }
+  }, [draggingStage]);
 
   return (
     <Stage

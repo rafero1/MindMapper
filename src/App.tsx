@@ -28,8 +28,6 @@ import { useSettingsStore } from "./stores/settingsStore/settingsStore";
  * Connection customization (icon, size, color, dashed, solid, etc.)
  * - Connection labels
  *
- * Cursor pointer on node hover (lol why is this hard)
- *
  * Grid
  * - Grid snapping when dragging nodes
  *

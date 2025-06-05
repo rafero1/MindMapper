@@ -2,6 +2,7 @@ import { Circle, Group, Text } from "react-konva";
 import type { TreeNode } from "../../../stores/nodeStore/types";
 import type { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 import { Colors } from "../../../theme/colors";
+import { setCursor } from "../../../utils/css";
 
 type Props = {
   node: TreeNode;
@@ -18,6 +19,10 @@ const CanvasNode = ({ node, onClick, onDragMove }: Props) => {
       draggable
       onClick={onClick}
       onDragMove={onDragMove}
+      onMouseEnter={() => setCursor("pointer")}
+      onMouseLeave={() => setCursor("auto")}
+      onDragStart={() => setCursor("grabbing")}
+      onDragEnd={() => setCursor("pointer")}
     >
       <Circle
         radius={60}
