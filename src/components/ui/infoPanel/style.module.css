@@ -1,0 +1,15 @@
+.infoContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.infoText {
+  font-size: 14px;
+  color: #ccc;
+}

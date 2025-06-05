@@ -1,31 +1,40 @@
 import "./App.css";
 import { useState } from "react";
-import { Layer, Stage } from "react-konva";
+import { Layer } from "react-konva";
 import FloatingMenu from "./components/ui/floatingMenu/menu";
 import type { TreeNode } from "./stores/types";
 import { useTreeNodeStore } from "./stores/nodeStore";
 import CanvasNode from "./components/canvas/node/canvasNode";
 import NodeConnection from "./components/canvas/connection/connection";
+import InteractiveStage from "./components/canvas/interactiveStage/interactiveStage";
+import InfoPanel from "./components/ui/infoPanel/infoPanel";
 
 /**
  * TODO:
  *
- * Close menu when clicking outside
- * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
+ * Improve menu Styling
+ * - Close floating node menu when clicking outside
  *
  * Choose node text when creating
+ * When creating node, place it in an appropriate position
+ * Manual reparenting of nodes (dragging a node onto another node)
  *
- * Improve menu Styling
- * Node customization (size, color, etc)
- * Node long description (rich text)
- * Node icons
+ * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
  *
- * Connection customization (dashed, solid, etc.)
- * Connection labels
+ * Node customization (size, color, icon, etc)
+ * - Node long description (rich text)
+ *
+ * Connection customization (icon, size, color, dashed, solid, etc.)
+ * - Connection labels
  *
  * Cursor pointer on node hover (lol why is this hard)
+ * Show zoom level in info panel
  *
- * Move camera (pan) and zoom functionality in canvas
+ * Grid
+ * - Grid snapping when dragging nodes
+ *
+ * Save and load tree structure to JSON
+ * - Save to indexedDB
  *
  * Consider removing dragging and automatically place nodes in a grid (pathfinding)
  * - Autosize nodes based on text length
@@ -53,7 +62,13 @@ function App() {
         x={nodeMenuPosition.x}
         y={nodeMenuPosition.y}
       />
-      <Stage width={window.innerWidth} height={window.innerHeight}>
+      <InfoPanel
+        data={[
+          { label: "Node Count", value: Object.keys(nodes).length },
+          { label: "Zoom Level", value: "1.0" },
+        ]}
+      />
+      <InteractiveStage>
         <Layer>
           {Object.values(nodes)
             .filter((node) => node.parentId)
@@ -93,7 +108,7 @@ function App() {
             />
           ))}
         </Layer>
-      </Stage>
+      </InteractiveStage>
     </>
   );
 }
