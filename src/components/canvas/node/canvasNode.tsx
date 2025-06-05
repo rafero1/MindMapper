@@ -1,5 +1,5 @@
 import { Circle, Group, Text } from "react-konva";
-import type { TreeNode } from "../../../stores/types";
+import type { TreeNode } from "../../../stores/nodeStore/types";
 import type { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 import { Colors } from "../../../theme/colors";
 

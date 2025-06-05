@@ -12,4 +12,8 @@
 .infoText {
   font-size: 14px;
   color: #ccc;
+  background: #0000007d;
+  border-radius: 4px;
+  padding: 6px;
+  width: fit-content;
 }

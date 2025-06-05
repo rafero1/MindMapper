@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import classes from "./style.module.css";
-import { generateNodeId, type TreeNode } from "../../../stores/types";
-import { useTreeNodeStore } from "../../../stores/nodeStore";
+import { generateNodeId, type TreeNode } from "../../../stores/nodeStore/types";
+import { useTreeNodeStore } from "../../../stores/nodeStore/nodeStore";
 
 type Props = {
   open: boolean;

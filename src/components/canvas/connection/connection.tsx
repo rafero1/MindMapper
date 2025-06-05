@@ -1,5 +1,5 @@
 import { Line } from "react-konva";
-import type { TreeNode } from "../../../stores/types";
+import type { TreeNode } from "../../../stores/nodeStore/types";
 import { Colors } from "../../../theme/colors";
 
 type Props = {

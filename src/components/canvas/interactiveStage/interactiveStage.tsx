@@ -2,6 +2,7 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import type { Stage as StageType } from "konva/lib/Stage";
 import { useRef, useState } from "react";
 import { Stage } from "react-konva";
+import { useSettingsStore } from "../../../stores/settingsStore/settingsStore";
 
 const ZOOM_BY = 1.2;
 const MIN_ZOOM = 0.1;
@@ -13,12 +14,13 @@ type Props = {
 
 const InteractiveStage = ({ children }: Props) => {
   const stageRef = useRef<StageType | null>(null);
-
   const [draggingStage, setDraggingStage] = useState(false);
   const [lastPointerPosition, setLastPointerPosition] = useState({
     x: 0,
     y: 0,
   });
+
+  const { setZoomLevel } = useSettingsStore();
 
   /**
    * Zoom in and out of the canvas using the mouse wheel.
@@ -44,6 +46,7 @@ const InteractiveStage = ({ children }: Props) => {
     newScale = Math.max(newScale, MIN_ZOOM);
     newScale = Math.min(newScale, MAX_ZOOM);
     stage.scale({ x: newScale, y: newScale });
+    setZoomLevel(newScale);
 
     // change position based on pointer location
 

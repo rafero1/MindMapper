@@ -2,12 +2,13 @@ import "./App.css";
 import { useState } from "react";
 import { Layer } from "react-konva";
 import FloatingMenu from "./components/ui/floatingMenu/menu";
-import type { TreeNode } from "./stores/types";
-import { useTreeNodeStore } from "./stores/nodeStore";
+import type { TreeNode } from "./stores/nodeStore/types";
+import { useTreeNodeStore } from "./stores/nodeStore/nodeStore";
 import CanvasNode from "./components/canvas/node/canvasNode";
 import NodeConnection from "./components/canvas/connection/connection";
 import InteractiveStage from "./components/canvas/interactiveStage/interactiveStage";
 import InfoPanel from "./components/ui/infoPanel/infoPanel";
+import { useSettingsStore } from "./stores/settingsStore/settingsStore";
 
 /**
  * TODO:
@@ -28,7 +29,6 @@ import InfoPanel from "./components/ui/infoPanel/infoPanel";
  * - Connection labels
  *
  * Cursor pointer on node hover (lol why is this hard)
- * Show zoom level in info panel
  *
  * Grid
  * - Grid snapping when dragging nodes
@@ -46,12 +46,16 @@ function App() {
     (state) => state
   );
 
+  const nodeArray = Object.values(nodes);
+
   const [isNodeMenuOpen, setIsNodeMenuOpen] = useState(false);
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
   const [nodeMenuPosition, setNodeMenuPosition] = useState({
     x: 0,
     y: 0,
   });
+
+  const { zoomLevel } = useSettingsStore();
 
   return (
     <>
@@ -64,13 +68,13 @@ function App() {
       />
       <InfoPanel
         data={[
-          { label: "Node Count", value: Object.keys(nodes).length },
-          { label: "Zoom Level", value: "1.0" },
+          { label: "Node Count", value: nodeArray.length },
+          { label: "Zoom Level", value: zoomLevel.toPrecision(2) + "x" },
         ]}
       />
       <InteractiveStage>
         <Layer>
-          {Object.values(nodes)
+          {nodeArray
             .filter((node) => node.parentId)
             .map((node) => {
               if (!node.parentId) {
@@ -87,7 +91,7 @@ function App() {
             })}
         </Layer>
         <Layer>
-          {Object.values(nodes).map((node) => (
+          {nodeArray.map((node) => (
             <CanvasNode
               key={node.id}
               node={node}
