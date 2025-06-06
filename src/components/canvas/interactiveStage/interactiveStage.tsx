@@ -11,9 +11,10 @@ const MAX_ZOOM = 5;
 
 type Props = {
   children: React.ReactNode;
+  onStageClick?: (event: KonvaEventObject<MouseEvent>) => void;
 };
 
-const InteractiveStage = ({ children }: Props) => {
+const InteractiveStage = ({ onStageClick, children }: Props) => {
   const stageRef = useRef<StageType | null>(null);
   const [draggingStage, setDraggingStage] = useState(false);
   const [lastPointerPosition, setLastPointerPosition] = useState({
@@ -131,6 +132,7 @@ const InteractiveStage = ({ children }: Props) => {
       onMouseDown={handleBeginDragStage}
       onMouseMove={handleDragStage}
       onMouseUp={handleStopDragStage}
+      onClick={onStageClick}
     >
       {children}
     </Stage>

@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Layer } from "react-konva";
 import FloatingMenu from "./components/ui/floatingMenu/menu";
 import type { TreeNode } from "./stores/nodeStore/types";
@@ -9,18 +9,21 @@ import NodeConnection from "./components/canvas/connection/connection";
 import InteractiveStage from "./components/canvas/interactiveStage/interactiveStage";
 import InfoPanel from "./components/ui/infoPanel/infoPanel";
 import { useSettingsStore } from "./stores/settingsStore/settingsStore";
+import type { KonvaEventObject } from "konva/lib/Node";
 
 /**
  * TODO:
  *
- * Improve menu Styling
- * - Close floating node menu when clicking outside
- *
- * Choose node text when creating
- * When creating node, place it in an appropriate position
+ * Select and grab multiple nodes
  * Manual reparenting of nodes (dragging a node onto another node)
+ * Save and load tree structure to JSON
+ * - Save to indexedDB
  *
  * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
+ *
+ * Improve menu Styling
+ *
+ * Choose node text when creating
  *
  * Node customization (size, color, icon, etc)
  * - Node long description (rich text)
@@ -28,41 +31,59 @@ import { useSettingsStore } from "./stores/settingsStore/settingsStore";
  * Connection customization (icon, size, color, dashed, solid, etc.)
  * - Connection labels
  *
+ * When creating node, place it in an appropriate position
+ *
  * Grid
  * - Grid snapping when dragging nodes
- *
- * Save and load tree structure to JSON
- * - Save to indexedDB
  *
  * Consider removing dragging and automatically place nodes in a grid (pathfinding)
  * - Autosize nodes based on text length
  * - Calculate new node position based on current nodes in grid
  */
 
-function App() {
-  const { nodes, updateNodePosition: updatePosition } = useTreeNodeStore(
-    (state) => state
-  );
+interface NodeMenuState {
+  selectedNode: TreeNode | null;
+  position: {
+    x: number;
+    y: number;
+  };
+}
 
+function App() {
+  const { zoomLevel } = useSettingsStore();
+  const { nodes } = useTreeNodeStore((state) => state);
   const nodeArray = Object.values(nodes);
 
-  const [isNodeMenuOpen, setIsNodeMenuOpen] = useState(false);
-  const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
-  const [nodeMenuPosition, setNodeMenuPosition] = useState({
-    x: 0,
-    y: 0,
+  const [nodeMenuState, setNodeMenuState] = useState<NodeMenuState>({
+    selectedNode: null,
+    position: { x: 0, y: 0 },
   });
 
-  const { zoomLevel } = useSettingsStore();
+  const floatingMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const handleClick = useCallback(
+    (event: KonvaEventObject<MouseEvent>) => {
+      if (
+        nodeMenuState.selectedNode &&
+        !floatingMenuRef.current?.contains(event.evt.target as Node)
+      ) {
+        setNodeMenuState({ selectedNode: null, position: { x: 0, y: 0 } });
+      }
+    },
+    [nodeMenuState.selectedNode]
+  );
 
   return (
     <>
       <FloatingMenu
-        open={isNodeMenuOpen}
-        selectedNode={selectedNode}
-        onClose={() => setIsNodeMenuOpen(false)}
-        x={nodeMenuPosition.x}
-        y={nodeMenuPosition.y}
+        open={Boolean(nodeMenuState.selectedNode)}
+        selectedNode={nodeMenuState.selectedNode}
+        onClose={() =>
+          setNodeMenuState({ selectedNode: null, position: { x: 0, y: 0 } })
+        }
+        x={nodeMenuState.position.x}
+        y={nodeMenuState.position.y}
+        ref={floatingMenuRef}
       />
       <InfoPanel
         data={[
@@ -70,7 +91,7 @@ function App() {
           { label: "Zoom Level", value: zoomLevel.toPrecision(2) + "x" },
         ]}
       />
-      <InteractiveStage>
+      <InteractiveStage onStageClick={handleClick}>
         <Layer>
           {nodeArray
             .filter((node) => node.parentId)
@@ -94,18 +115,10 @@ function App() {
               key={node.id}
               node={node}
               onClick={(event) => {
-                event.cancelBubble = true;
-                setSelectedNode(node);
-                setNodeMenuPosition({
-                  x: event.evt.clientX,
-                  y: event.evt.clientY,
+                setNodeMenuState({
+                  selectedNode: node,
+                  position: { x: event.evt.clientX, y: event.evt.clientY },
                 });
-                setIsNodeMenuOpen(true);
-              }}
-              onDragMove={(event) => {
-                const newX = event.target.x();
-                const newY = event.target.y();
-                updatePosition(node.id, newX, newY);
               }}
             />
           ))}

@@ -3,14 +3,16 @@ import type { TreeNode } from "../../../stores/nodeStore/types";
 import type { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 import { Colors } from "../../../theme/colors";
 import { setCursor } from "../../../utils/css";
+import { useTreeNodeStore } from "../../../stores/nodeStore/nodeStore";
 
 type Props = {
   node: TreeNode;
   onClick: (event: KonvaEventObject<MouseEvent, Node<NodeConfig>>) => void;
-  onDragMove: (event: KonvaEventObject<DragEvent, Node<NodeConfig>>) => void;
 };
 
-const CanvasNode = ({ node, onClick, onDragMove }: Props) => {
+const CanvasNode = ({ node, onClick }: Props) => {
+  const { updateNodePosition } = useTreeNodeStore();
+
   return (
     <Group
       id={node.id}
@@ -18,7 +20,11 @@ const CanvasNode = ({ node, onClick, onDragMove }: Props) => {
       y={node.y}
       draggable
       onClick={onClick}
-      onDragMove={onDragMove}
+      onDragMove={(event) => {
+        const newX = event.target.x();
+        const newY = event.target.y();
+        updateNodePosition(node.id, newX, newY);
+      }}
       onMouseEnter={() => setCursor("pointer")}
       onMouseLeave={() => setCursor("auto")}
       onDragStart={() => setCursor("grabbing")}
