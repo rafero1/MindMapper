@@ -14,10 +14,11 @@ import type { KonvaEventObject } from "konva/lib/Node";
 /**
  * TODO:
  *
- * Select and grab multiple nodes
  * Manual reparenting of nodes (dragging a node onto another node)
  * Save and load tree structure to JSON
  * - Save to indexedDB
+ *
+ * Autosize nodes based on text length
  *
  * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
  *
@@ -35,9 +36,7 @@ import type { KonvaEventObject } from "konva/lib/Node";
  *
  * Grid
  * - Grid snapping when dragging nodes
- *
- * Consider removing dragging and automatically place nodes in a grid (pathfinding)
- * - Autosize nodes based on text length
+ * - Consider removing dragging feature and automatically place nodes in a grid (pathfinding)
  * - Calculate new node position based on current nodes in grid
  */
 

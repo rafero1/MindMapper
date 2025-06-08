@@ -1,9 +1,10 @@
 import { Circle, Group, Text } from "react-konva";
 import type { TreeNode } from "../../../stores/nodeStore/types";
 import type { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
-import { Colors } from "../../../theme/colors";
+import { Theme } from "../../../theme/theme";
 import { setCursor } from "../../../utils/css";
 import { useTreeNodeStore } from "../../../stores/nodeStore/nodeStore";
+import { useRef, useState } from "react";
 
 type Props = {
   node: TreeNode;
@@ -12,6 +13,9 @@ type Props = {
 
 const CanvasNode = ({ node, onClick }: Props) => {
   const { updateNodePosition } = useTreeNodeStore();
+
+  const [size] = useState(Theme.nodeSize);
+  const textOffset = useRef(10);
 
   return (
     <Group
@@ -31,21 +35,22 @@ const CanvasNode = ({ node, onClick }: Props) => {
       onDragEnd={() => setCursor("pointer")}
     >
       <Circle
-        radius={60}
-        fill={Colors.NODE_FILL}
-        stroke={Colors.NODE_STROKE}
-        strokeWidth={3}
+        radius={size}
+        fill={Theme.colors.nodeFill}
+        stroke={Theme.colors.nodeStroke}
+        strokeWidth={Theme.nodeStrokeWidth}
       />
       {node.text && (
         <Text
           key={node.id + "-text"}
           text={node.text}
-          fontSize={20}
-          fill={Colors.NODE_TEXT}
-          width={120}
-          height={120}
-          x={-60}
-          y={-60}
+          fontSize={Theme.font.size}
+          fontFamily={Theme.font.family}
+          fill={Theme.colors.nodeText}
+          width={(size - textOffset.current) * 2}
+          height={(size - textOffset.current) * 2}
+          x={-size + textOffset.current}
+          y={-size + textOffset.current}
           verticalAlign="middle"
           align="center"
         />
