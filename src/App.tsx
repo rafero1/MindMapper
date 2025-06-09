@@ -49,7 +49,7 @@ interface NodeMenuState {
 }
 
 function App() {
-  const { zoomLevel } = useSettingsStore();
+  const { settings } = useSettingsStore();
   const { nodes } = useTreeNodeStore((state) => state);
   const nodeArray = Object.values(nodes);
 
@@ -87,7 +87,10 @@ function App() {
       <InfoPanel
         data={[
           { label: "Node Count", value: nodeArray.length },
-          { label: "Zoom Level", value: zoomLevel.toPrecision(2) + "x" },
+          {
+            label: "Zoom Level",
+            value: settings.zoomLevel.toPrecision(2) + "x",
+          },
         ]}
       />
       <InteractiveStage onStageClick={handleClick}>
