@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Stage } from "react-konva";
 import { useSettingsStore } from "../../../stores/settingsStore/settingsStore";
 import { setCursor } from "../../../utils/css";
+import Grid from "../grid/grid";
 
 const ZOOM_BY = 1.2;
 const MIN_ZOOM = 0.1;
@@ -22,7 +23,7 @@ const InteractiveStage = ({ onStageClick, children }: Props) => {
     y: 0,
   });
 
-  const { setZoomLevel } = useSettingsStore();
+  const { settings, setZoomLevel } = useSettingsStore();
 
   /**
    * Zoom in and out of the canvas using the mouse wheel.
@@ -134,6 +135,16 @@ const InteractiveStage = ({ onStageClick, children }: Props) => {
       onMouseUp={handleStopDragStage}
       onClick={onStageClick}
     >
+      {settings.gridEnabled && (
+        <Grid
+          gridSize={30}
+          stageWidth={window.innerWidth}
+          stageHeight={window.innerHeight}
+          stageScale={settings.zoomLevel}
+          stageX={stageRef.current?.x() || 0}
+          stageY={stageRef.current?.y() || 0}
+        />
+      )}
       {children}
     </Stage>
   );

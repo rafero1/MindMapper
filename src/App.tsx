@@ -10,31 +10,35 @@ import InteractiveStage from "./components/canvas/interactiveStage/interactiveSt
 import InfoPanel from "./components/ui/infoPanel/infoPanel";
 import { useSettingsStore } from "./stores/settingsStore/settingsStore";
 import type { KonvaEventObject } from "konva/lib/Node";
+import ActionBar from "./components/ui/actionBar/actionBar";
 
 /**
  * TODO:
  *
- * Manual reparenting of nodes (dragging a node onto another node)
- * Save and load tree structure to JSON
- * - Save to indexedDB
+ * Save and load tree structure to indexedDB
+ * - Export/import tree structure as JSON
+ * Mindmap selector
+ * - Manage multiple trees in list or grid
+ * - Create, open or delete trees
+ * - Rename trees
  *
  * Autosize nodes based on text length
- *
- * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
- *
  * Improve menu Styling
- *
  * Choose node text when creating
- *
  * Node customization (size, color, icon, etc)
  * - Node long description (rich text)
- *
  * Connection customization (icon, size, color, dashed, solid, etc.)
  * - Connection labels
+ * Dark/light mode toggle
  *
- * When creating node, place it in an appropriate position
+ * Add undo/redo functionality
+ * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
+ * Manual reparenting of nodes (dragging a node onto another node)
+ * - Drag node and children or just the node
  *
+ * Save and load settings (default zoom, theme, grid, etc) to local storage/indexedDB
  * Grid
+ * - Refactor grid to use buffering (infinite scrolling) rather than redrawing the grid lines
  * - Grid snapping when dragging nodes
  * - Consider removing dragging feature and automatically place nodes in a grid (pathfinding)
  * - Calculate new node position based on current nodes in grid
@@ -49,7 +53,7 @@ interface NodeMenuState {
 }
 
 function App() {
-  const { zoomLevel } = useSettingsStore();
+  const { settings } = useSettingsStore();
   const { nodes } = useTreeNodeStore((state) => state);
   const nodeArray = Object.values(nodes);
 
@@ -87,9 +91,13 @@ function App() {
       <InfoPanel
         data={[
           { label: "Node Count", value: nodeArray.length },
-          { label: "Zoom Level", value: zoomLevel.toPrecision(2) + "x" },
+          {
+            label: "Zoom Level",
+            value: settings.zoomLevel.toPrecision(2) + "x",
+          },
         ]}
       />
+      <ActionBar />
       <InteractiveStage onStageClick={handleClick}>
         <Layer>
           {nodeArray
