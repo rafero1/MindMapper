@@ -140,6 +140,9 @@ const InteractiveStage = ({ onStageClick, children }: Props) => {
           gridSize={30}
           stageWidth={window.innerWidth}
           stageHeight={window.innerHeight}
+          stageScale={settings.zoomLevel}
+          stageX={stageRef.current?.x() || 0}
+          stageY={stageRef.current?.y() || 0}
         />
       )}
       {children}

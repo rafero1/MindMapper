@@ -8,7 +8,7 @@ interface Settings {
 interface SettingsState {
   settings: Settings;
   setZoomLevel: (value: number) => void;
-  setGridEnabled: (value: boolean) => void;
+  toggleGrid: () => void;
 }
 
 export const useSettingsStore = create<SettingsState>((set) => ({
@@ -23,11 +23,11 @@ export const useSettingsStore = create<SettingsState>((set) => ({
         zoomLevel: value,
       },
     })),
-  setGridEnabled: (value) =>
+  toggleGrid: () =>
     set((state) => ({
       settings: {
         ...state.settings,
-        gridEnabled: value,
+        gridEnabled: !state.settings.gridEnabled,
       },
     })),
 }));

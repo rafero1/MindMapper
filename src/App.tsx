@@ -10,6 +10,7 @@ import InteractiveStage from "./components/canvas/interactiveStage/interactiveSt
 import InfoPanel from "./components/ui/infoPanel/infoPanel";
 import { useSettingsStore } from "./stores/settingsStore/settingsStore";
 import type { KonvaEventObject } from "konva/lib/Node";
+import ActionBar from "./components/ui/actionBar/actionBar";
 
 /**
  * TODO:
@@ -32,9 +33,8 @@ import type { KonvaEventObject } from "konva/lib/Node";
  * Connection customization (icon, size, color, dashed, solid, etc.)
  * - Connection labels
  *
- * When creating node, place it in an appropriate position
- *
  * Grid
+ * - Refactor grid to use buffering (infinite scrolling) rather than redrawing the grid lines
  * - Grid snapping when dragging nodes
  * - Consider removing dragging feature and automatically place nodes in a grid (pathfinding)
  * - Calculate new node position based on current nodes in grid
@@ -93,6 +93,7 @@ function App() {
           },
         ]}
       />
+      <ActionBar />
       <InteractiveStage onStageClick={handleClick}>
         <Layer>
           {nodeArray
