@@ -12,3 +12,10 @@ export interface TreeNode {
 export function generateNodeId() {
   return `node-${Math.random().toString(36).slice(2, 9)}`;
 }
+
+/**
+ * Map of TreeNodes
+ */
+export type NodeMap = {
+  [id: string]: TreeNode;
+};

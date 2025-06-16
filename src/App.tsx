@@ -30,6 +30,7 @@ import ActionBar from "./components/ui/actionBar/actionBar";
  * Connection customization (icon, size, color, dashed, solid, etc.)
  * - Connection labels
  * Dark/light mode toggle
+ * Localization
  *
  * Add undo/redo functionality
  * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
