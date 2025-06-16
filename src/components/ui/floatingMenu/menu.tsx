@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import classes from "./style.module.css";
 import { generateNodeId, type TreeNode } from "../../../stores/nodeStore/types";
 import { useTreeNodeStore } from "../../../stores/nodeStore/nodeStore";
+import { insertOrUpdateNodeInDB, deleteNodeFromDB } from "../../../stores/db";
 
 type Props = {
   open: boolean;
@@ -35,6 +36,10 @@ const FloatingMenu = forwardRef<HTMLDivElement, Props>(
               return;
             }
             updateNodeText(selectedNode.id, newText);
+            selectedNode.text = newText;
+            insertOrUpdateNodeInDB(selectedNode).catch((err) => {
+              console.error("Failed to update node in DB:", err);
+            });
           }}
         >
           Rename
@@ -53,6 +58,9 @@ const FloatingMenu = forwardRef<HTMLDivElement, Props>(
               parentId: selectedNode.id,
             };
             addNode(newNode);
+            insertOrUpdateNodeInDB(newNode).catch((err) => {
+              console.error("Failed to add node to DB:", err);
+            });
           }}
         >
           Add
@@ -64,6 +72,9 @@ const FloatingMenu = forwardRef<HTMLDivElement, Props>(
               return;
             }
             deleteNode(selectedNode.id);
+            deleteNodeFromDB(selectedNode.id).catch((err) => {
+              console.error("Failed to delete node from DB:", err);
+            });
           }}
         >
           Delete

@@ -1,12 +1,5 @@
 import { create } from "zustand";
-import type { TreeNode } from "./types";
-
-/**
- * Map of TreeNodes
- */
-export type NodeMap = {
-  [id: string]: TreeNode;
-};
+import type { NodeMap, TreeNode } from "./types";
 
 /**
  * delete the node and turn its children into new root nodes
@@ -27,6 +20,7 @@ type DeleteMode = Orphan | Reparent | Cascade;
 
 interface NodeState {
   nodes: NodeMap;
+  setAllNodes: (nodes: NodeMap) => void;
   addNode: (newNode: TreeNode) => void;
   updateNodePosition: (id: string, x: number, y: number) => void;
   deleteNode: (id: string, deleteMode?: DeleteMode) => void;
@@ -82,14 +76,19 @@ export function getDescendants(nodes: NodeMap, parentId: string) {
   return descendants;
 }
 
+export const DEFAULT_NODEMAP = {
+  root: {
+    id: "root",
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
+    text: "Root",
+  },
+};
+
 export const useTreeNodeStore = create<NodeState>((set) => ({
-  nodes: {
-    root: {
-      id: "root",
-      x: window.innerWidth / 2,
-      y: window.innerHeight / 2,
-      text: "Root",
-    },
+  nodes: DEFAULT_NODEMAP,
+  setAllNodes: (nodes: NodeMap) => {
+    set((state) => ({ ...state.nodes, isLoaded: true, nodes }));
   },
   addNode: (newNode: TreeNode) =>
     set((state) => ({ nodes: { ...state.nodes, [newNode.id]: newNode } })),

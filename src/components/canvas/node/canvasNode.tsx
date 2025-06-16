@@ -5,6 +5,7 @@ import { Theme } from "../../../theme/theme";
 import { setCursor } from "../../../utils/css";
 import { useTreeNodeStore } from "../../../stores/nodeStore/nodeStore";
 import { useRef, useState } from "react";
+import { insertOrUpdateNodeInDB } from "../../../stores/db";
 
 type Props = {
   node: TreeNode;
@@ -32,7 +33,12 @@ const CanvasNode = ({ node, onClick }: Props) => {
       onMouseEnter={() => setCursor("pointer")}
       onMouseLeave={() => setCursor("auto")}
       onDragStart={() => setCursor("grabbing")}
-      onDragEnd={() => setCursor("pointer")}
+      onDragEnd={() => {
+        setCursor("pointer");
+        insertOrUpdateNodeInDB(node).catch((err) => {
+          console.error("Failed to update node in DB:", err);
+        });
+      }}
     >
       <Circle
         radius={size}

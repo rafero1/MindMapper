@@ -14,7 +14,7 @@ interface SettingsState {
 export const useSettingsStore = create<SettingsState>((set) => ({
   settings: {
     zoomLevel: 1,
-    gridEnabled: true,
+    gridEnabled: false,
   },
   setZoomLevel: (value) =>
     set((state) => ({
