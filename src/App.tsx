@@ -10,11 +10,9 @@ import {
 import CanvasNode from "./components/canvas/node/canvasNode";
 import NodeConnection from "./components/canvas/connection/connection";
 import InteractiveStage from "./components/canvas/interactiveStage/interactiveStage";
-import InfoPanel from "./components/ui/infoPanel/infoPanel";
-import { useSettingsStore } from "./stores/settingsStore/settingsStore";
 import type { KonvaEventObject } from "konva/lib/Node";
-import ActionBar from "./components/ui/actionBar/actionBar";
 import { insertOrUpdateNodeInDB, getAllNodesFromDB } from "./stores/db";
+import UI from "./components/ui/ui/ui";
 
 /**
  * TODO:
@@ -60,7 +58,6 @@ interface NodeMenuState {
 const INITIALIZATION_DELAY = 1000;
 
 function App() {
-  const { settings } = useSettingsStore();
   const { nodes, setAllNodes } = useTreeNodeStore((state) => state);
   const nodeArray = Object.values(nodes);
 
@@ -134,16 +131,7 @@ function App() {
         y={nodeMenuState.position.y}
         ref={floatingMenuRef}
       />
-      <InfoPanel
-        data={[
-          { label: "Node Count", value: nodeArray.length },
-          {
-            label: "Zoom Level",
-            value: settings.zoomLevel.toPrecision(2) + "x",
-          },
-        ]}
-      />
-      <ActionBar />
+      <UI />
       <InteractiveStage onStageClick={handleClick}>
         <Layer>
           {nodeArray

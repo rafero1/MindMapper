@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSettingsStore } from "../../../stores/settingsStore/settingsStore";
 import { getBoolean, setBoolean } from "../../../utils/localStorage";
 import classes from "./style.module.css";
