@@ -2,7 +2,12 @@ import "./App.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Layer } from "react-konva";
 import FloatingMenu from "./components/ui/floatingMenu/menu";
-import { type GraphNode } from "./stores/nodeStore/types";
+import {
+  DEFAULT_GRAPH,
+  DEFAULT_GRAPHNODE_MAP,
+  generateNodeId,
+  type GraphNode,
+} from "./stores/nodeStore/types";
 import { useGraphStore } from "./stores/nodeStore/nodeStore";
 import CanvasNode from "./components/canvas/node/canvasNode";
 import NodeConnection from "./components/canvas/connection/connection";
@@ -10,6 +15,8 @@ import InteractiveStage from "./components/canvas/interactiveStage/interactiveSt
 import type { KonvaEventObject } from "konva/lib/Node";
 import UI from "./components/ui/ui/ui";
 import { useLoadData } from "./hooks/useLoadData";
+import { DbService } from "./stores/db";
+
 /**
  * TODO:
  *
@@ -74,11 +81,34 @@ function App() {
 
   useEffect(() => {
     if (!isLoading) {
-      if (data.graphs) {
+      console.log("Data loaded:", data);
+      if (data.graphs && data.graphs.length > 0) {
         setGraphs(data.graphs);
         if (data.activeGraph && data.nodes) {
           setActiveGraph(data.activeGraph, data.nodes);
         }
+      } else {
+        // Initial state
+        const graph = {
+          ...DEFAULT_GRAPH,
+          id: crypto.randomUUID(),
+        };
+        const rootNode = {
+          ...DEFAULT_GRAPHNODE_MAP.root,
+          id: generateNodeId(),
+          graphId: graph.id,
+        };
+        const nodeMap = {
+          [rootNode.id]: rootNode,
+        };
+        DbService.Graphs.insertOrUpdate(graph).catch((error) => {
+          console.error("Failed to insert or update graph:", error);
+        });
+        DbService.Nodes.insertOrUpdate(rootNode).catch((error) => {
+          console.error("Failed to insert or update root node:", error);
+        });
+        setGraphs([graph]);
+        setActiveGraph(graph, nodeMap);
       }
     }
   }, [isLoading, data, setGraphs, setActiveGraph]);

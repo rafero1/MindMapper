@@ -1,5 +1,4 @@
 import { DbService } from "../../../stores/db";
-import { useEffect, useState } from "react";
 import {
   DEFAULT_GRAPHNODE_MAP,
   generateNodeId,

@@ -22,7 +22,7 @@ const UI = () => {
         <button onClick={toggleMenu}>
           <Bars3Icon className="w-5" title="Open sidebar menu" />
         </button>
-        <h1 className="text-4xl">{graph.title}</h1>
+        <h1 className="text-4xl">{graph?.title}</h1>
       </div>
 
       <SidebarMenu open={menuOpen} />
