@@ -20,8 +20,7 @@ import { DbService } from "./stores/db";
 /**
  * TODO:
  *
- * Support for multiple mind maps
- * - Export and import trees (JSON or XML)
+ * Export and import trees (JSON or XML)
  *
  * Add undo/redo functionality
  * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
