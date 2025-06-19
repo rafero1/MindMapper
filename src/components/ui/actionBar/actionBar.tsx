@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { useSettingsStore } from "../../../stores/settingsStore/settingsStore";
 import { getBoolean, setBoolean } from "../../../utils/localStorage";
-import classes from "./style.module.css";
+import { useGraphStore } from "../../../stores/nodeStore/nodeStore";
+import { DEFAULT_GRAPHNODE_MAP } from "../../../stores/nodeStore/types";
 
 const ActionBar = () => {
   const { settings, setGridEnabled, toggleGrid } = useSettingsStore(
     (state) => state
   );
+
+  const { activeGraph, addNode } = useGraphStore((state) => state);
 
   const [loaded, setLoaded] = useState(false);
 
@@ -27,14 +30,28 @@ const ActionBar = () => {
   }, [loaded, settings.gridEnabled]);
 
   return (
-    <div className={classes.menu}>
+    <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-10 w-auto flex flex-row gap-2 p-2 bg-stone-950/75 rounded-xl shadow-lg">
       <button
-        className={classes.menuItem}
         onClick={() => {
           toggleGrid();
         }}
       >
         Toggle Grid
+      </button>
+      <button
+        onClick={() => {
+          if (!activeGraph) {
+            return;
+          }
+
+          const node = {
+            ...DEFAULT_GRAPHNODE_MAP.root,
+            graphId: activeGraph.id,
+          };
+          addNode(node);
+        }}
+      >
+        Create Root Node
       </button>
     </div>
   );

@@ -1,10 +1,10 @@
 import { Line } from "react-konva";
-import type { TreeNode } from "../../../stores/nodeStore/types";
-import { Colors, Theme } from "../../../theme/theme";
+import type { GraphNode } from "../../../stores/nodeStore/types";
+import { Theme } from "../../../theme/theme";
 
 type Props = {
-  parent: TreeNode;
-  node: TreeNode;
+  parent: GraphNode;
+  node: GraphNode;
 };
 
 const NodeConnection = ({ parent, node }: Props) => {

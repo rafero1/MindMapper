@@ -2,25 +2,18 @@ import "./App.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Layer } from "react-konva";
 import FloatingMenu from "./components/ui/floatingMenu/menu";
-import type { TreeNode } from "./stores/nodeStore/types";
-import {
-  DEFAULT_NODEMAP,
-  useTreeNodeStore,
-} from "./stores/nodeStore/nodeStore";
+import { type GraphNode } from "./stores/nodeStore/types";
+import { useGraphStore } from "./stores/nodeStore/nodeStore";
 import CanvasNode from "./components/canvas/node/canvasNode";
 import NodeConnection from "./components/canvas/connection/connection";
 import InteractiveStage from "./components/canvas/interactiveStage/interactiveStage";
 import type { KonvaEventObject } from "konva/lib/Node";
-import { insertOrUpdateNodeInDB, getAllNodesFromDB } from "./stores/db";
 import UI from "./components/ui/ui/ui";
-
+import { useLoadData } from "./hooks/useLoadData";
 /**
  * TODO:
  *
  * Support for multiple mind maps
- * - List or grid view of mind maps
- * - Open last opened mind map on app start
- * - Create, open, delete or rename trees
  * - Export and import trees (JSON or XML)
  *
  * Add undo/redo functionality
@@ -28,7 +21,6 @@ import UI from "./components/ui/ui/ui";
  * Manual reparenting of nodes (dragging a node onto another node)
  * - Drag node and children or just the node
  *
- * Improve floating menu styling
  * Write node text when creating node
  * - Autosize nodes based on text length
  * Node customization (size, color, icon, etc)
@@ -48,17 +40,15 @@ import UI from "./components/ui/ui/ui";
  */
 
 interface NodeMenuState {
-  selectedNode: TreeNode | null;
+  selectedNode: GraphNode | null;
   position: {
     x: number;
     y: number;
   };
 }
 
-const INITIALIZATION_DELAY = 1000;
-
 function App() {
-  const { nodes, setAllNodes } = useTreeNodeStore((state) => state);
+  const { nodes, setActiveGraph, setGraphs } = useGraphStore((state) => state);
   const nodeArray = Object.values(nodes);
 
   const [nodeMenuState, setNodeMenuState] = useState<NodeMenuState>({
@@ -80,36 +70,18 @@ function App() {
     [nodeMenuState.selectedNode]
   );
 
-  const [isLoading, setIsLoading] = useState(true);
+  const { isLoading, data } = useLoadData();
 
   useEffect(() => {
     if (!isLoading) {
-      return;
-    }
-
-    getAllNodesFromDB()
-      .then((nodeMap) => {
-        if (nodeMap) {
-          if (Object.keys(nodeMap).length === 0) {
-            // Temporarily use default node map if no nodes are found
-            nodeMap = DEFAULT_NODEMAP;
-            insertOrUpdateNodeInDB(DEFAULT_NODEMAP.root).catch((error) => {
-              console.error("Failed to add default node to database:", error);
-            });
-          }
-
-          setAllNodes(nodeMap);
-
-          // Delay to make loading less abrupt
-          setTimeout(() => {
-            setIsLoading(false);
-          }, INITIALIZATION_DELAY);
+      if (data.graphs) {
+        setGraphs(data.graphs);
+        if (data.activeGraph && data.nodes) {
+          setActiveGraph(data.activeGraph, data.nodes);
         }
-      })
-      .catch((error) => {
-        console.error("Failed to load nodes from database:", error);
-      });
-  }, [isLoading, setAllNodes]);
+      }
+    }
+  }, [isLoading, data, setGraphs, setActiveGraph]);
 
   if (isLoading) {
     return (

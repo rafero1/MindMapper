@@ -1,5 +1,11 @@
 import { create } from "zustand";
-import type { NodeMap, TreeNode } from "./types";
+import {
+  type Graph,
+  type GraphNodeMap,
+  type GraphNode,
+  DEFAULT_GRAPH,
+  DEFAULT_GRAPHNODE_MAP,
+} from "./types";
 
 /**
  * delete the node and turn its children into new root nodes
@@ -18,21 +24,28 @@ type Cascade = "cascade";
 
 type DeleteMode = Orphan | Reparent | Cascade;
 
-interface NodeState {
-  nodes: NodeMap;
-  setAllNodes: (nodes: NodeMap) => void;
-  addNode: (newNode: TreeNode) => void;
+interface GraphState {
+  graphs: Graph[];
+  activeGraph: Graph | null;
+  nodes: GraphNodeMap;
+  setGraphs: (graphs: Graph[]) => void;
+  setActiveGraph: (graph: Graph, nodes: GraphNodeMap) => void;
+  addGraph: (newGraph: Graph) => void;
+  renameGraph: (id: string, newTitle: string) => void;
+  updateLastOpenedDateGraph: (id: string) => void;
+  deleteGraph: (id: string) => void;
+  addNode: (newNode: GraphNode) => void;
   updateNodePosition: (id: string, x: number, y: number) => void;
   deleteNode: (id: string, deleteMode?: DeleteMode) => void;
   updateNodeText: (id: string, text: string) => void;
 }
 
 /**
- * builds and returns a map of parentId: [list of TreeNode children]
+ * builds and returns a map of parentId: [children]
  * @param nodes the NodeMap
  */
-function mapNodesToChildren(nodes: NodeMap) {
-  const childIndex: { [parentId: string]: TreeNode[] } = {};
+function mapNodesToChildren(nodes: GraphNodeMap) {
+  const childIndex: { [parentId: string]: GraphNode[] } = {};
   for (const nodeId in nodes) {
     const node = nodes[nodeId];
     if (node.parentId) {
@@ -51,9 +64,9 @@ function mapNodesToChildren(nodes: NodeMap) {
  * @param parentId the id of the parent
  * @returns array of descendants
  */
-export function getDescendants(nodes: NodeMap, parentId: string) {
+export function getDescendants(nodes: GraphNodeMap, parentId: string) {
   const childIndex = mapNodesToChildren(nodes);
-  const descendants: TreeNode[] = [];
+  const descendants: GraphNode[] = [];
 
   // Use a queue to perform a breadth-first search for descendants, starting from the parent
   const queue: string[] = [parentId];
@@ -76,21 +89,34 @@ export function getDescendants(nodes: NodeMap, parentId: string) {
   return descendants;
 }
 
-export const DEFAULT_NODEMAP = {
-  root: {
-    id: "root",
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
-    text: "Root",
-  },
-};
-
-export const useTreeNodeStore = create<NodeState>((set) => ({
-  nodes: DEFAULT_NODEMAP,
-  setAllNodes: (nodes: NodeMap) => {
-    set((state) => ({ ...state.nodes, isLoaded: true, nodes }));
-  },
-  addNode: (newNode: TreeNode) =>
+export const useGraphStore = create<GraphState>((set) => ({
+  graphs: [],
+  activeGraph: DEFAULT_GRAPH,
+  nodes: DEFAULT_GRAPHNODE_MAP,
+  setActiveGraph: (graph: Graph, nodes: GraphNodeMap) =>
+    set((state) => ({ ...state, activeGraph: graph, nodes })),
+  setGraphs: (graphs: Graph[]) => set((state) => ({ ...state, graphs })),
+  addGraph: (newGraph: Graph) =>
+    set((state) => ({
+      graphs: [...state.graphs, newGraph],
+    })),
+  renameGraph: (id: string, newTitle: string) =>
+    set((state) => ({
+      graphs: state.graphs.map((graph) =>
+        graph.id === id ? { ...graph, title: newTitle } : graph
+      ),
+    })),
+  updateLastOpenedDateGraph: (id: string) =>
+    set((state) => ({
+      graphs: state.graphs.map((graph) =>
+        graph.id === id ? { ...graph, lastModified: new Date() } : graph
+      ),
+    })),
+  deleteGraph: (id: string) =>
+    set((state) => ({
+      graphs: [...state.graphs.filter((graph) => graph.id !== id)],
+    })),
+  addNode: (newNode: GraphNode) =>
     set((state) => ({ nodes: { ...state.nodes, [newNode.id]: newNode } })),
   updateNodePosition: (id: string, newX: number, newY: number) =>
     set((state) => ({

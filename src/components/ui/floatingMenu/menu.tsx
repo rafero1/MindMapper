@@ -1,30 +1,31 @@
 import { forwardRef } from "react";
-import classes from "./style.module.css";
-import { generateNodeId, type TreeNode } from "../../../stores/nodeStore/types";
-import { useTreeNodeStore } from "../../../stores/nodeStore/nodeStore";
-import { insertOrUpdateNodeInDB, deleteNodeFromDB } from "../../../stores/db";
+import {
+  generateNodeId,
+  type GraphNode,
+} from "../../../stores/nodeStore/types";
+import { useGraphStore } from "../../../stores/nodeStore/nodeStore";
+import { DbService } from "../../../stores/db";
 
 type Props = {
   open: boolean;
   x: number;
   y: number;
-  selectedNode: TreeNode | null;
+  selectedNode: GraphNode | null;
   onClose: () => void;
 };
 
 const FloatingMenu = forwardRef<HTMLDivElement, Props>(
   ({ open, x, y, selectedNode, onClose }, ref) => {
-    const { addNode, updateNodeText, deleteNode } = useTreeNodeStore(
+    const { addNode, updateNodeText, deleteNode } = useGraphStore(
       (state) => state
     );
 
     return open ? (
-      <div className={classes.menu} style={{ left: x, top: y }} ref={ref}>
-        <div className={classes.closeContainer}>
-          <button className={classes.close} onClick={onClose}>
-            X
-          </button>
-        </div>
+      <div
+        className="absolute z-20 bg-stone-950/75 p-2 flex flex-col gap-2 rounded-md shadow-lg"
+        style={{ left: x, top: y }}
+        ref={ref}
+      >
         <button
           onClick={() => {
             onClose();
@@ -37,7 +38,7 @@ const FloatingMenu = forwardRef<HTMLDivElement, Props>(
             }
             updateNodeText(selectedNode.id, newText);
             selectedNode.text = newText;
-            insertOrUpdateNodeInDB(selectedNode).catch((err) => {
+            DbService.Nodes.insertOrUpdate(selectedNode).catch((err) => {
               console.error("Failed to update node in DB:", err);
             });
           }}
@@ -56,9 +57,10 @@ const FloatingMenu = forwardRef<HTMLDivElement, Props>(
               y: selectedNode.y,
               text: `Node`,
               parentId: selectedNode.id,
+              graphId: selectedNode.graphId,
             };
             addNode(newNode);
-            insertOrUpdateNodeInDB(newNode).catch((err) => {
+            DbService.Nodes.insertOrUpdate(newNode).catch((err) => {
               console.error("Failed to add node to DB:", err);
             });
           }}
@@ -72,7 +74,7 @@ const FloatingMenu = forwardRef<HTMLDivElement, Props>(
               return;
             }
             deleteNode(selectedNode.id);
-            deleteNodeFromDB(selectedNode.id).catch((err) => {
+            DbService.Nodes.delete(selectedNode.id).catch((err) => {
               console.error("Failed to delete node from DB:", err);
             });
           }}

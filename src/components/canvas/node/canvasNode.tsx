@@ -1,19 +1,19 @@
 import { Circle, Group, Text } from "react-konva";
-import type { TreeNode } from "../../../stores/nodeStore/types";
+import type { GraphNode } from "../../../stores/nodeStore/types";
 import type { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 import { Theme } from "../../../theme/theme";
 import { setCursor } from "../../../utils/css";
-import { useTreeNodeStore } from "../../../stores/nodeStore/nodeStore";
+import { useGraphStore } from "../../../stores/nodeStore/nodeStore";
 import { useRef, useState } from "react";
-import { insertOrUpdateNodeInDB } from "../../../stores/db";
+import { DbService } from "../../../stores/db";
 
 type Props = {
-  node: TreeNode;
+  node: GraphNode;
   onClick: (event: KonvaEventObject<MouseEvent, Node<NodeConfig>>) => void;
 };
 
 const CanvasNode = ({ node, onClick }: Props) => {
-  const { updateNodePosition } = useTreeNodeStore();
+  const { updateNodePosition } = useGraphStore();
 
   const [size] = useState(Theme.nodeSize);
   const textOffset = useRef(10);
@@ -35,7 +35,7 @@ const CanvasNode = ({ node, onClick }: Props) => {
       onDragStart={() => setCursor("grabbing")}
       onDragEnd={() => {
         setCursor("pointer");
-        insertOrUpdateNodeInDB(node).catch((err) => {
+        DbService.Nodes.insertOrUpdate(node).catch((err) => {
           console.error("Failed to update node in DB:", err);
         });
       }}

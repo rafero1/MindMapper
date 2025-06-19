@@ -1,19 +1,31 @@
-import classes from "./style.module.css";
 import InfoPanel from "../infoPanel/infoPanel";
 import ActionBar from "../actionBar/actionBar";
 import { useSettingsStore } from "../../../stores/settingsStore/settingsStore";
-import { useTreeNodeStore } from "../../../stores/nodeStore/nodeStore";
+import { useGraphStore } from "../../../stores/nodeStore/nodeStore";
+import SidebarMenu from "../sidebarMenu/menu";
+import { useState } from "react";
+import { Bars3Icon } from "@heroicons/react/16/solid";
 
 const UI = () => {
-  const { nodes } = useTreeNodeStore((state) => state);
+  const { activeGraph: graph, nodes } = useGraphStore((state) => state);
   const { settings } = useSettingsStore();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
+  };
 
   return (
     <>
-      <div className={classes.topMenuContainer}>
-        <button>Menu</button>
-        <h1>MindMap Title</h1>
+      <div className="absolute top-10 left-10 z-20 flex gap-6">
+        <button onClick={toggleMenu}>
+          <Bars3Icon className="w-5" title="Open sidebar menu" />
+        </button>
+        <h1 className="text-4xl">{graph.title}</h1>
       </div>
+
+      <SidebarMenu open={menuOpen} />
 
       <ActionBar />
 
