@@ -34,6 +34,7 @@ import { DbService } from "./stores/db";
  * - Connection labels
  *
  * Custom dialog prompts
+ * Improve buttons (add components)
  * Dark/light mode toggle (change bg and menu colors)
  * Internationalization (i18n)
  *

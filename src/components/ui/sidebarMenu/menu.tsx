@@ -23,16 +23,16 @@ const SidebarMenu = () => {
     setOpen((prev) => !prev);
   };
 
+  const menuTranslate = open ? "translate-x-0" : "-translate-x-92";
+
   return (
     <div
-      className={`flex flex-row-reverse gap-2 absolute top-30 left-10 bottom-10 z-10 transform ${
-        open ? "translate-x-0" : "-translate-x-92"
-      } transition-transform duration-250 ease-in-out`}
+      className={`flex flex-row-reverse gap-2 absolute top-30 left-10 bottom-10 z-10 transform ${menuTranslate} transition-transform duration-250 ease-in-out`}
     >
       <button
         className="h-fit bg-stone-950"
         onClick={toggleMenu}
-        title="Open sidebar menu"
+        title={`${open ? "Close" : "Open"} sidebar menu`}
       >
         {open ? (
           <ChevronDoubleLeftIcon className="w-5" />
