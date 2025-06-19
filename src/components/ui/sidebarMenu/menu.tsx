@@ -8,11 +8,7 @@ import {
 } from "../../../stores/nodeStore/types";
 import { useGraphStore } from "../../../stores/nodeStore/nodeStore";
 import Item from "./menuItem/item";
-import {
-  Bars3Icon,
-  ChevronDoubleRightIcon,
-  PlusIcon,
-} from "@heroicons/react/16/solid";
+import { ChevronDoubleRightIcon, PlusIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import { ChevronDoubleLeftIcon } from "@heroicons/react/16/solid";
 

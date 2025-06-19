@@ -20,7 +20,6 @@ import { DbService } from "./stores/db";
 /**
  * TODO:
  *
- * Export and import trees (JSON or XML)
  *
  * Add undo/redo functionality
  * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
@@ -34,8 +33,12 @@ import { DbService } from "./stores/db";
  * Connection customization (icon, size, color, dashed, solid, etc.)
  * - Connection labels
  *
+ * Custom dialog prompts
  * Dark/light mode toggle (change bg and menu colors)
- * Internationalization (i18n) support
+ * Internationalization (i18n)
+ *
+ * Refactor graphs to store nodes inside the graph object
+ * Export and import trees (JSON or XML)
  *
  * Grid
  * - Refactor grid to use buffering (infinite scrolling) rather than redrawing the grid lines
