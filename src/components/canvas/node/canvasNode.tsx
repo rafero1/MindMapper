@@ -13,7 +13,7 @@ type Props = {
 };
 
 const CanvasNode = ({ node, onClick }: Props) => {
-  const { updateNodePosition } = useGraphStore();
+  const updateNodePosition = useGraphStore((state) => state.updateNodePosition);
 
   const [size] = useState(Theme.nodeSize);
   const textOffset = useRef(10);

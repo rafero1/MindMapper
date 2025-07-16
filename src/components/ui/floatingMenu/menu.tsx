@@ -16,9 +16,9 @@ type Props = {
 
 const FloatingMenu = forwardRef<HTMLDivElement, Props>(
   ({ open, x, y, selectedNode, onClose }, ref) => {
-    const { addNode, updateNodeText, deleteNode } = useGraphStore(
-      (state) => state
-    );
+    const addNode = useGraphStore((state) => state.addNode);
+    const updateNodeText = useGraphStore((state) => state.updateNodeText);
+    const deleteNode = useGraphStore((state) => state.deleteNode);
 
     return open ? (
       <div

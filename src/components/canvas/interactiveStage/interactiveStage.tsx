@@ -23,7 +23,8 @@ const InteractiveStage = ({ onStageClick, children }: Props) => {
     y: 0,
   });
 
-  const { settings, setZoomLevel } = useSettingsStore();
+  const settings = useSettingsStore((state) => state.settings);
+  const setZoomLevel = useSettingsStore((state) => state.setZoomLevel);
 
   /**
    * Zoom in and out of the canvas using the mouse wheel.

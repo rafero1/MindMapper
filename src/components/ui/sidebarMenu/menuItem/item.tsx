@@ -20,12 +20,12 @@ async function fetchGraphWithNodes(id: string) {
 }
 
 const Item = ({ item, active }: Props) => {
-  const {
-    setActiveGraph,
-    deleteGraph,
-    renameGraph,
-    updateLastOpenedDateGraph,
-  } = useGraphStore((state) => state);
+  const setActiveGraph = useGraphStore((state) => state.setActiveGraph);
+  const deleteGraph = useGraphStore((state) => state.deleteGraph);
+  const renameGraph = useGraphStore((state) => state.renameGraph);
+  const updateLastOpenedDateGraph = useGraphStore(
+    (state) => state.updateLastOpenedDateGraph
+  );
 
   return (
     <li className="flex gap-2 justify-between">

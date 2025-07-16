@@ -13,9 +13,10 @@ import { useState } from "react";
 import { ChevronDoubleLeftIcon } from "@heroicons/react/16/solid";
 
 const SidebarMenu = () => {
-  const { graphs, activeGraph, setActiveGraph, addGraph } = useGraphStore(
-    (state) => state
-  );
+  const graphs = useGraphStore((state) => state.graphs);
+  const activeGraph = useGraphStore((state) => state.activeGraph);
+  const setActiveGraph = useGraphStore((state) => state.setActiveGraph);
+  const addGraph = useGraphStore((state) => state.addGraph);
 
   const [open, setOpen] = useState(false);
 

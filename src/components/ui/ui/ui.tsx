@@ -5,8 +5,9 @@ import { useGraphStore } from "../../../stores/nodeStore/nodeStore";
 import SidebarMenu from "../sidebarMenu/menu";
 
 const UI = () => {
-  const { activeGraph: graph, nodes } = useGraphStore((state) => state);
-  const { settings } = useSettingsStore();
+  const graph = useGraphStore((state) => state.activeGraph);
+  const nodes = useGraphStore((state) => state.nodes);
+  const settings = useSettingsStore((state) => state.settings);
 
   return (
     <>
