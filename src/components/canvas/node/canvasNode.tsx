@@ -14,6 +14,8 @@ type Props = {
 
 const CanvasNode = ({ node, onClick }: Props) => {
   const updateNodePosition = useGraphStore((state) => state.updateNodePosition);
+  const updateHistory = useGraphStore((state) => state.updateHistory);
+  const createSnapshot = useGraphStore((state) => state.createSnapshot);
 
   const [size] = useState(Theme.nodeSize);
   const textOffset = useRef(10);
@@ -32,7 +34,10 @@ const CanvasNode = ({ node, onClick }: Props) => {
       }}
       onMouseEnter={() => setCursor("pointer")}
       onMouseLeave={() => setCursor("auto")}
-      onDragStart={() => setCursor("grabbing")}
+      onDragStart={() => {
+        setCursor("grabbing");
+        updateHistory();
+      }}
       onDragEnd={() => {
         setCursor("pointer");
         DbService.Nodes.insertOrUpdate(node).catch((err) => {

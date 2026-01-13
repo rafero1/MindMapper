@@ -1,5 +1,10 @@
 import Dexie, { type EntityTable } from "dexie";
-import { type Graph, type GraphNode, nodeArrayToMap } from "./nodeStore/types";
+import {
+  type Graph,
+  type GraphNode,
+  type GraphNodeMap,
+  nodeArrayToMap,
+} from "./nodeStore/types";
 
 const DB_NAME = "MindMapDB";
 const GraphTable = "id, title, createdAt, lastModified";
@@ -34,6 +39,19 @@ export const DbService = {
 
     async getAll() {
       return db.graphs.orderBy("createdAt").toArray();
+    },
+
+    async clearNodes(graphId: string) {
+      return db.nodes.where("graphId").equals(graphId).delete();
+    },
+
+    async replaceAllNodes(graphId: string, newNodes: GraphNodeMap) {
+      await db.nodes.where("graphId").equals(graphId).delete();
+      const nodesArray = Object.values(newNodes);
+      if (nodesArray.length > 0) {
+        return db.nodes.bulkPut(nodesArray);
+      }
+      return Promise.resolve();
     },
 
     async insertOrUpdate(graph: Graph) {

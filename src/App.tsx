@@ -21,7 +21,6 @@ import { DbService } from "./stores/db";
  * TODO:
  *
  *
- * Add undo/redo functionality
  * Select which type of deletion to perform when deleting (orphan, reparent, cascade)
  * Manual reparenting of nodes (dragging a node onto another node)
  * - Drag node and children or just the node
@@ -29,7 +28,7 @@ import { DbService } from "./stores/db";
  * Write node text when creating node
  * - Autosize nodes based on text length
  * Node customization (size, color, icon, etc)
- * - Node long description (rich text)
+ * - Node long description (rich text). Maybe on hover or click, it shows a popup with the full node description
  * Connection customization (icon, size, color, dashed, solid, etc.)
  * - Connection labels
  *
@@ -41,11 +40,14 @@ import { DbService } from "./stores/db";
  * Refactor graphs to store nodes inside the graph object
  * Export and import trees (JSON or XML)
  *
- * Grid
+ * Node grid rework
  * - Refactor grid to use buffering (infinite scrolling) rather than redrawing the grid lines
  * - Grid snapping when dragging nodes
- * - Consider removing dragging feature and automatically place nodes in a grid (pathfinding)
- * - Calculate new node position based on current nodes in grid
+ *
+ * OR
+ *
+ * - Consider removing manual node placement and automatically place nodes in a grid (pathfinding)
+ *   - Calculate new node position based on current nodes in grid
  *
  */
 

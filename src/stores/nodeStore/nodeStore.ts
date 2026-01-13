@@ -24,10 +24,17 @@ type Cascade = "cascade";
 
 type DeleteMode = Orphan | Reparent | Cascade;
 
+type UpdateOptions = {
+  skipHistory?: boolean;
+};
+
 interface GraphState {
   graphs: Graph[];
   activeGraph: Graph | null;
   nodes: GraphNodeMap;
+  snapshot: GraphNodeMap | null;
+  history: GraphNodeMap[];
+  future: GraphNodeMap[];
   setGraphs: (graphs: Graph[]) => void;
   setActiveGraph: (graph: Graph, nodes: GraphNodeMap) => void;
   addGraph: (newGraph: Graph) => void;
@@ -35,9 +42,18 @@ interface GraphState {
   updateLastOpenedDateGraph: (id: string) => void;
   deleteGraph: (id: string) => void;
   addNode: (newNode: GraphNode) => void;
-  updateNodePosition: (id: string, x: number, y: number) => void;
+  updateNodePosition: (
+    id: string,
+    x: number,
+    y: number,
+    options?: UpdateOptions
+  ) => void;
   deleteNode: (id: string, deleteMode?: DeleteMode) => void;
   updateNodeText: (id: string, text: string) => void;
+  createSnapshot: () => void;
+  updateHistory: () => void;
+  undo: () => void;
+  redo: () => void;
 }
 
 /**
@@ -93,8 +109,17 @@ export const useGraphStore = create<GraphState>((set) => ({
   graphs: [],
   activeGraph: DEFAULT_GRAPH,
   nodes: DEFAULT_GRAPHNODE_MAP,
+  snapshot: {},
+  history: [],
+  future: [],
   setActiveGraph: (graph: Graph, nodes: GraphNodeMap) =>
-    set((state) => ({ ...state, activeGraph: graph, nodes })),
+    set((state) => ({
+      ...state,
+      activeGraph: graph,
+      nodes,
+      history: [],
+      future: [],
+    })),
   setGraphs: (graphs: Graph[]) => set((state) => ({ ...state, graphs })),
   addGraph: (newGraph: Graph) =>
     set((state) => ({
@@ -117,10 +142,26 @@ export const useGraphStore = create<GraphState>((set) => ({
       graphs: [...state.graphs.filter((graph) => graph.id !== id)],
     })),
   addNode: (newNode: GraphNode) =>
-    set((state) => ({ nodes: { ...state.nodes, [newNode.id]: newNode } })),
-  updateNodePosition: (id: string, newX: number, newY: number) =>
+    set((state) => {
+      return {
+        ...state,
+        nodes: { ...state.nodes, [newNode.id]: newNode },
+        history: [...state.history, state.nodes],
+        future: [],
+      };
+    }),
+  updateNodePosition: (
+    id: string,
+    newX: number,
+    newY: number,
+    options: UpdateOptions = { skipHistory: true }
+  ) =>
     set((state) => ({
       nodes: { ...state.nodes, [id]: { ...state.nodes[id], x: newX, y: newY } },
+      ...(!options?.skipHistory && {
+        history: [...state.history, state.nodes],
+        future: [],
+      }),
     })),
   deleteNode: (id: string, deleteMode = "reparent") =>
     set((state) => {
@@ -155,10 +196,57 @@ export const useGraphStore = create<GraphState>((set) => ({
         default:
           break;
       }
-      return { nodes: updatedNodes };
+      return {
+        ...state,
+        nodes: updatedNodes,
+        history: [...state.history, state.nodes],
+        future: [],
+      };
     }),
   updateNodeText: (id: string, newText: string) =>
     set((state) => ({
+      ...state,
       nodes: { ...state.nodes, [id]: { ...state.nodes[id], text: newText } },
+      history: [...state.history, state.nodes],
+      future: [],
     })),
+  createSnapshot: () =>
+    set((state) => ({
+      ...state,
+      snapshot: { ...state.nodes },
+    })),
+  updateHistory: () =>
+    set((state) => ({
+      ...state,
+      history: [...state.history, state.nodes],
+      future: [],
+    })),
+  undo: () =>
+    set((state) => {
+      if (state.history.length === 0) return state;
+      const currentState = state.nodes;
+      const lastState = state.history[state.history.length - 1];
+      const newHistory = state.history.slice(0, -1);
+      const newFuture = [currentState, ...state.future];
+      return {
+        ...state,
+        nodes: lastState,
+        history: newHistory,
+        future: newFuture,
+      };
+    }),
+  redo: () =>
+    set((state) => {
+      if (state.future.length === 0) return state;
+      const currentState = state.nodes;
+      const nextState = state.future[0];
+      const newHistory = [...state.history, currentState];
+      const newFuture = state.future.slice(1);
+      return {
+        ...state,
+        nodes: nextState,
+        history: newHistory,
+        future: newFuture,
+      };
+    }),
 }));
